@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kisan Choice Calculator - किसान चॉइस कैलकुलेटर</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-brand: #1b5e20;
+      --primary-light: #2e7d32;
+      --profit-bg: #e8f5e9;
+      --alert-amber: #d97706;
+      --alert-bg: #fffbeb;
+      --risk-red: #dc2626;
+      --risk-bg: #ffebee;
+      --neutral-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--neutral-bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    /* Mobile-first wrapper (360px - 440px) */
+    .app-container {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--primary-brand);
+      color: #ffffff;
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-content {
+      max-width: 440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: #a7f3d0;
+      font-weight: 500;
+    }
+
+    .lang-pill-btn {
+      background-color: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .lang-pill-btn:active {
+      transform: scale(0.96);
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    /* Cards */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e293b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Crop selector */
+    .crop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .crop-btn {
+      background-color: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      min-height: 96px;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .crop-btn:active {
+      transform: scale(0.97);
+    }
+
+    .crop-btn.active {
+      border-color: var(--primary-light);
+      background-color: var(--profit-bg);
+      box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+    }
+
+    .crop-emoji {
+      font-size: 32px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .crop-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .crop-badge {
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 9999px;
+      margin-top: 4px;
+    }
+
+    .badge-high { background: #fee2e2; color: #991b1b; }
+    .badge-med { background: #fef3c7; color: #92400e; }
+    .badge-low { background: #d1fae5; color: #065f46; }
+
+    /* Stepper */
+    .stepper-container {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .stepper-btn {
+      width: 52px;
+      height: 48px;
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      transition: background-color 0.15s;
+    }
+
+    .stepper-btn.plus {
+      background-color: var(--primary-light);
+      color: #ffffff;
+      border-color: var(--primary-light);
+    }
+
+    .stepper-btn:active {
+      transform: scale(0.95);
+    }
+
+    .stepper-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .stepper-input {
+      width: 100%;
+      height: 48px;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+      color: #0f172a;
+      outline: none;
+      padding: 0 40px 0 12px;
+    }
+
+    .stepper-input:focus {
+      border-color: var(--primary-light);
+    }
+
+    .stepper-unit {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Quality chips */
+    .chips-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .chip-btn {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      min-height: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .chip-btn:active {
+      transform: scale(0.96);
+    }
+
+    .chip-btn.active.good {
+      border-color: #10b981;
+      background-color: #ecfdf5;
+    }
+
+    .chip-btn.active.avg {
+      border-color: #f59e0b;
+      background-color: #fffbeb;
+    }
+
+    .chip-btn.active.poor {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+    }
+
+    .chip-title {
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+
+    /* Toggle Switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 4px 0;
+    }
+
+    .toggle-label-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .toggle-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: .2s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary-light);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Dropdowns */
+    .form-select {
+      width: 100%;
+      height: 46px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: 600;
+      background-color: #f8fafc;
+      color: #1e293b;
+      outline: none;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    /* Hero Recommendation Card */
+    .hero-card {
+      background: var(--profit-bg);
+      border: 2px solid var(--primary-light);
+      border-radius: 16px;
+      padding: 18px 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--primary-light);
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-profit-box {
+      background-color: #ffffff;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hero-profit-amount {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--primary-light);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-bullets {
+      list-style: none;
+      font-size: 12px;
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hero-bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .bullet-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--primary-light);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    /* Ranked Option Cards */
+    .ranked-card {
+      background-color: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+
+    .ranked-card.rank-1 {
+      border-color: var(--primary-light);
+      background-color: #f7fcf7;
+    }
+
+    .ranked-card.rank-2 {
+      border-color: var(--alert-amber);
+      background-color: var(--alert-bg);
+    }
+
+    .ranked-card.rank-3 {
+      border-color: #fca5a5;
+      background-color: var(--risk-bg);
+    }
+
+    .ranked-header {
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      user-select: none;
+      min-height: 68px;
+    }
+
+    .badge-rank {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-rank.best { background: var(--primary-light); color: white; }
+    .badge-rank.okay { background: var(--alert-amber); color: white; }
+    .badge-rank.risk { background: var(--risk-red); color: white; }
+
+    .option-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+
+    .net-rupees {
+      font-size: 18px;
+      font-weight: 900;
+      color: #0f172a;
+      text-align: right;
+    }
+
+    .diff-indicator {
+      font-size: 11px;
+      font-weight: 700;
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    /* Accordion Breakdown */
+    .accordion-body {
+      padding: 12px 14px 14px 14px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      background-color: #ffffff;
+      font-size: 12px;
+      display: none;
+    }
+
+    .accordion-body.open {
+      display: block;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      color: #475569;
+    }
+
+    .breakdown-row.net-total {
+      border-top: 1px dashed #cbd5e1;
+      margin-top: 8px;
+      padding-top: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    /* Action Buttons */
+    .btn-calculate {
+      width: 100%;
+      height: 50px;
+      background-color: var(--primary-brand);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 6px -1px rgba(27, 94, 32, 0.3);
+      transition: all 0.15s;
+    }
+
+    .btn-calculate:active {
+      transform: scale(0.98);
+      background-color: #144718;
+    }
+
+    .btn-whatsapp {
+      width: 100%;
+      height: 48px;
+      background-color: #25D366;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.3);
+      transition: all 0.15s;
+    }
+
+    .btn-whatsapp:active {
+      transform: scale(0.98);
+      background-color: #1ebe5d;
+    }
+
+    .btn-recalc {
+      width: 100%;
+      height: 44px;
+      background-color: #ffffff;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-recalc:active {
+      background-color: #f1f5f9;
+    }
+
+    .duration-chips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .duration-btn {
+      padding: 8px 4px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .duration-btn.active {
+      background: var(--profit-bg);
+      border-color: var(--primary-light);
+      color: var(--primary-brand);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Header -->
+  <header>
+    <div class="header-content">
+      <div>
+        <div class="brand-title" id="ui-app-title">Kisan Choice Calculator</div>
+        <div class="brand-sub" id="ui-app-tagline">Post-Harvest Decision Tool for Farmers</div>
+      </div>
+      <button type="button" class="lang-pill-btn" id="lang-toggle-btn" onclick="toggleLanguage()">
+        <span id="lang-btn-text">हिंदी में देखें</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Mobile Container -->
+  <main class="app-container">
+
+    <!-- Inputs Section -->
+    <div class="card" id="inputs-card">
+      <div class="card-title">
+        <span id="ui-step1-title">Harvest Parameters</span>
+        <span style="font-size: 11px; color: var(--primary-light); background: var(--profit-bg); padding: 2px 8px; border-radius: 9999px;">Live Update</span>
+      </div>
+
+      <!-- 1. Crop Selector -->
+      <label style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px; display: block;" id="ui-crop-label">1. Select Crop</label>
+      <div class="crop-grid">
+        <button type="button" class="crop-btn active" id="crop-tomato" onclick="selectCrop('tomato')">
+          <span class="crop-emoji">🍅</span>
+          <span class="crop-name" id="crop-name-tomato">Tomato</span>
+          <span class="crop-badge badge-high" id="badge-tomato">Perishable</span>
+        </button>
+        <button type="button" class="crop-btn" id="crop-guava" onclick="selectCrop('guava')">
+          <span class="crop-emoji">🥑</span>
+          <span class="crop-name" id="crop-name-guava">Guava</span>
+          <span class="crop-badge badge-med" id="badge-guava">Semi-perish</span>
+        </button>
+        <button type="button" class="crop-btn" id="crop-wheat" onclick="selectCrop('wheat')">
+          <span class="crop-emoji">🌾</span>
+          <span class="crop-name" id="crop-name-wheat">Wheat</span>
+          <span class="crop-badge badge-low" id="badge-wheat">Grain (Durable)</span>
+        </button>
+      </div>
+
+      <!-- 2. Quantity Stepper -->
+      <div style="margin-top: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <label style="font-size: 12px; font-weight: 700; color: #334155;" id="ui-qty-label">2. Quantity (Quintals)</label>
+          <span style="font-size: 11px; color: #64748b;" id="ui-qty-kg-conv">≈ 2,500 kg</span>
+        </div>
+        <div class="stepper-container">
+          <button type="button" class="stepper-btn" onclick="adjustQty(-1)" aria-label="Decrease quantity">−</button>
+          <div class="stepper-input-wrap">
+            <input type="number" id="qty-input" class="stepper-input" value="25" min="1" max="1000" oninput="onQtyChange()" />
+            <span class="stepper-unit">QTL</span>
+          </div>
+          <button type="button" class="stepper-btn plus" onclick="adjustQty(1)" aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+
+      <!-- 3. Quality Chips -->
+      <div style="margin-top: 14px;">
+        <label style="font-size: 12px; font-weight: 700; color: #334155; display: block;" id="ui-quality-label">3. Crop Quality Grade</label>
+        <div class="chips-grid">
+          <button type="button" class="chip-btn active good" id="quality-good" onclick="selectQuality('good')">
+            <span class="chip-title">🟢 <span id="lbl-q-good">Good</span></span>
+            <span class="chip-desc" id="desc-q-good">Fresh, firm</span>
+          </button>
+          <button type="button" class="chip-btn" id="quality-avg" onclick="selectQuality('average')">
+            <span class="chip-title">🟡 <span id="lbl-q-avg">Average</span></span>
+            <span class="chip-desc" id="desc-q-avg">Mixed size</span>
+          </button>
+          <button type="button" class="chip-btn" id="quality-poor" onclick="selectQuality('poor')">
+            <span class="chip-title">🔴 <span id="lbl-q-poor">Poor</span></span>
+            <span class="chip-desc" id="desc-q-poor">Over-ripe</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Location & Mandi Selection -->
+      <div style="margin-top: 14px;">
+        <label style="font-size: 12px; font-weight: 700; color: #334155; display: block;" id="ui-local-mandi-label">4. Local Mandi (Sell Today)</label>
+        <select class="form-select" id="local-mandi-select" onchange="recalculate()">
+          <option value="local_nashik">Pimpalgaon Village Mandi (~4 km)</option>
+          <option value="local_kolar">Malur Local Yard (~6 km)</option>
+          <option value="local_varanasi">Rohania Sub-Yard (~5 km)</option>
+        </select>
+      </div>
+
+      <!-- Transport to District Toggle & Select -->
+      <div style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <span class="toggle-label" id="ui-transport-toggle-label">Can transport to District Mandi?</span>
+            <span class="toggle-sub" id="ui-transport-sub">Tempo / mini-truck available</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="transport-toggle" checked onchange="toggleTransport()" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div id="transport-options" style="margin-top: 10px;">
+          <select class="form-select" id="district-mandi-select" onchange="recalculate()">
+            <option value="dist_nashik">Nashik Central APMC (34 km)</option>
+            <option value="dist_bangalore">K.R. Market Wholesale (48 km)</option>
+            <option value="dist_varanasi">Chandpur Wholesale APMC (28 km)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 5. Storage Toggle & Duration -->
+      <div style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <span class="toggle-label" id="ui-storage-toggle-label">Willing to Store & Sell Later?</span>
+            <span class="toggle-sub" id="ui-storage-sub">Hold crop in godown for higher prices</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="storage-toggle" onchange="toggleStorage()" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Dynamic Storage Duration Chips (Smoothly shown/hidden) -->
+        <div id="storage-duration-section" style="display: none; margin-top: 10px;">
+          <span style="font-size: 11px; font-weight: 700; color: #475569;" id="ui-duration-label">Storage Duration:</span>
+          <div class="duration-chips">
+            <button type="button" class="duration-btn" id="dur-3" onclick="selectDuration(3)">3 Days</button>
+            <button type="button" class="duration-btn active" id="dur-7" onclick="selectDuration(7)">7 Days (1 Wk)</button>
+            <button type="button" class="duration-btn" id="dur-14" onclick="selectDuration(14)">14 Days (2 Wk)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primary Calculate / Jump to Results Button -->
+      <button type="button" class="btn-calculate" style="margin-top: 16px;" onclick="scrollToResults()">
+        <span id="ui-btn-calc">Calculate Best Sale Option ↓</span>
+      </button>
+    </div>
+
+    <!-- Output Dashboard Section -->
+    <div id="results-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div>
+          <h2 style="font-size: 16px; font-weight: 900; color: #0f172a;" id="ui-results-heading">Decision Comparison</h2>
+          <p style="font-size: 11px; color: #64748b;" id="ui-results-sub">Ranked by real net cash in hand</p>
+        </div>
+        <button type="button" class="btn-recalc" style="width: auto; padding: 4px 10px; font-size: 11px;" onclick="scrollToInputs()">
+          ↺ <span id="ui-btn-adjust">Adjust</span>
+        </button>
+      </div>
+
+      <!-- Hero Recommendation Banner -->
+      <div class="hero-card" id="hero-banner">
+        <div class="hero-tag">🏆 <span id="hero-badge-text">BEST RECOMMENDATION</span></div>
+        <h3 style="font-size: 16px; font-weight: 900; color: #0f172a; margin-top: 6px;" id="hero-title">Transport to District Mandi</h3>
+        
+        <div class="hero-profit-box">
+          <div>
+            <span style="font-size: 11px; color: #475569; display: block;" id="ui-hero-extra-label">Extra Profit in-hand:</span>
+            <span style="font-size: 10px; color: #64748b;" id="ui-hero-extra-sub">vs second best option</span>
+          </div>
+          <div class="hero-profit-amount" id="hero-profit-val">+₹2,400</div>
+        </div>
+
+        <ul class="hero-bullets">
+          <li class="hero-bullet-item">
+            <span class="bullet-dot"></span>
+            <span id="hero-bullet-1">Higher district price easily overcomes the freight transport cost.</span>
+          </li>
+          <li class="hero-bullet-item">
+            <span class="bullet-dot"></span>
+            <span id="hero-bullet-2">Good quality produce has minimal transit decay, leaving more saleable weight.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 3 Ranked Option Cards -->
+      <div style="margin-top: 14px;" id="ranked-cards-list">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+      <!-- WhatsApp Share Button -->
+      <div class="card" style="margin-top: 10px;">
+        <button type="button" class="btn-whatsapp" onclick="shareWhatsApp()">
+          <span>💬</span>
+          <span id="ui-btn-whatsapp">Share Summary via WhatsApp</span>
+        </button>
+      </div>
+
+      <!-- Recalculate Button -->
+      <button type="button" class="btn-recalc" style="margin-top: 10px;" onclick="scrollToInputs()">
+        ↑ <span id="ui-btn-recalculate">Edit Inputs & Recalculate</span>
+      </button>
+
+      <!-- Transparency footnote -->
+      <p style="font-size: 10px; color: #94a3b8; text-align: center; margin-top: 14px; line-height: 1.4;" id="ui-footnote">
+        Formulas calibrated with Agmarknet benchmarks & APMC mandi commission guidelines (2%).
+      </p>
+    </div>
+
+  </main>
+
+  <script>
+    // State
+    let currentLang = 'en';
+    let selectedCrop = 'tomato';
+    let quantity = 25; // quintals
+    let quality = 'good'; // 'good' | 'average' | 'poor'
+    let canTransport = true;
+    let willingToStore = false;
+    let storageDays = 7;
+    let openCardId = null;
+
+    // Data Models
+    const CROPS = {
+      tomato: {
+        nameEn: 'Tomato',
+        nameHi: 'टमाटर',
+        perishability: 'high',
+        localPrice: 1800,
+        districtPrice: 2750,
+        futurePrices: { 3: 2100, 7: 2400, 14: 2500 },
+        storageDailyRate: 6,
+        transitLoss: { good: 3.0, average: 6.5, poor: 12.0 },
+        spoilage: {
+          3: { good: 6.0, average: 12.0, poor: 22.0 },
+          7: { good: 18.0, average: 32.0, poor: 55.0 },
+          14: { good: 42.0, average: 70.0, poor: 92.0 }
+        }
+      },
+      guava: {
+        nameEn: 'Guava',
+        nameHi: 'अमरूद',
+        perishability: 'medium',
+        localPrice: 2200,
+        districtPrice: 3200,
+        futurePrices: { 3: 2500, 7: 2900, 14: 3100 },
+        storageDailyRate: 5,
+        transitLoss: { good: 2.0, average: 4.5, poor: 8.5 },
+        spoilage: {
+          3: { good: 4.0, average: 8.5, poor: 16.0 },
+          7: { good: 12.0, average: 22.0, poor: 40.0 },
+          14: { good: 28.0, average: 50.0, poor: 75.0 }
+        }
+      },
+      wheat: {
+        nameEn: 'Wheat',
+        nameHi: 'गेहूं',
+        perishability: 'low',
+        localPrice: 2275,
+        districtPrice: 2520,
+        futurePrices: { 3: 2320, 7: 2390, 14: 2480 },
+        storageDailyRate: 3,
+        transitLoss: { good: 0.2, average: 0.5, poor: 1.0 },
+        spoilage: {
+          3: { good: 0.1, average: 0.2, poor: 0.5 },
+          7: { good: 0.2, average: 0.4, poor: 0.9 },
+          14: { good: 0.4, average: 0.8, poor: 1.6 }
+        }
+      }
+    };
+
+    const MANDIS = {
+      local_nashik: { nameEn: 'Pimpalgaon Village Mandi', nameHi: 'पिंपलगांव ग्रामीण मंडी', km: 4 },
+      local_kolar: { nameEn: 'Malur Local Yard', nameHi: 'मालूर स्थानीय यार्ड', km: 6 },
+      local_varanasi: { nameEn: 'Rohania Sub-Yard', nameHi: 'रोहनिया उप-मंडी', km: 5 },
+      dist_nashik: { nameEn: 'Nashik Central APMC', nameHi: 'नासिक मुख्य एपीएमसी', km: 34 },
+      dist_bangalore: { nameEn: 'K.R. Market Wholesale', nameHi: 'के.आर. मार्केट थोक', km: 48 },
+      dist_varanasi: { nameEn: 'Chandpur Wholesale APMC', nameHi: 'चांदपुर थोक एपीएमसी', km: 28 }
+    };
+
+    const FREIGHT_BASE = 250;
+    const FREIGHT_PER_KM = 18;
+    const FREIGHT_PER_QTL = 12;
+    const MANDI_FEE_RATE = 0.02;
+
+    // Calculation Engine
+    function calculate() {
+      const crop = CROPS[selectedCrop];
+      const localMandiKey = document.getElementById('local-mandi-select').value;
+      const districtMandiKey = document.getElementById('district-mandi-select').value;
+      const localMandi = MANDIS[localMandiKey] || MANDIS.local_nashik;
+      const distMandi = MANDIS[districtMandiKey] || MANDIS.dist_nashik;
+
+      // Option 1: Sell Now (Local Mandi)
+      // Net = (Quantity * Local Price) - Mandi Fees (2%)
+      const opt1Gross = Math.round(quantity * crop.localPrice);
+      const opt1Fee = Math.round(opt1Gross * MANDI_FEE_RATE);
+      const opt1Net = opt1Gross - opt1Fee;
+      const opt1 = {
+        id: 'sell_now',
+        titleEn: 'Option 1: Sell Now (Local Mandi)',
+        titleHi: 'विकल्प १: आज ही स्थानीय मंडी में बेचें',
+        subtitleEn: `${localMandi.nameEn} (Immediate Cash, 0% Loss)`,
+        subtitleHi: `${localMandi.nameHi} (तुरंत नकद, शून्य सड़न)`,
+        gross: opt1Gross,
+        mandiFee: opt1Fee,
+        freight: 0,
+        storageFee: 0,
+        spoilageLossKg: 0,
+        spoilagePct: 0,
+        net: opt1Net,
+        saleQty: quantity,
+        pricePerQtl: crop.localPrice
+      };
+
+      // Option 2: Transport to District Mandi
+      // Net = (Effective Qty after Transit Loss) * District Price - Mandi Fees - Freight Cost
+      const transitLossPct = crop.transitLoss[quality];
+      const opt2EffectiveQty = quantity * (1 - transitLossPct / 100);
+      const opt2Gross = Math.round(opt2EffectiveQty * crop.districtPrice);
+      const opt2Fee = Math.round(opt2Gross * MANDI_FEE_RATE);
+      const freightCost = Math.round(FREIGHT_BASE + (distMandi.km * FREIGHT_PER_KM) + (quantity * FREIGHT_PER_QTL));
+      const opt2Net = Math.round(opt2Gross - opt2Fee - freightCost);
+      const opt2LossKg = Math.round(quantity * (transitLossPct / 100) * 100);
+
+      const opt2 = {
+        id: 'transport',
+        titleEn: 'Option 2: Transport to District Mandi',
+        titleHi: 'विकल्प २: जिला थोक मंडी ले जाएं',
+        subtitleEn: `${distMandi.nameEn} (${distMandi.km} km, higher wholesale rate)`,
+        subtitleHi: `${distMandi.nameHi} (${distMandi.km} किमी, ऊंचा भाव)`,
+        gross: opt2Gross,
+        mandiFee: opt2Fee,
+        freight: freightCost,
+        storageFee: 0,
+        spoilageLossKg: opt2LossKg,
+        spoilagePct: transitLossPct,
+        net: opt2Net,
+        saleQty: Number(opt2EffectiveQty.toFixed(1)),
+        pricePerQtl: crop.districtPrice
+      };
+
+      // Option 3: Store & Sell Later
+      // Net = (Effective Qty after Time Decay) * Future Price Proxy - Mandi Fees - Storage Fees
+      const storageLossPct = crop.spoilage[storageDays][quality];
+      const opt3EffectiveQty = quantity * (1 - storageLossPct / 100);
+      const futurePrice = crop.futurePrices[storageDays];
+      const opt3Gross = Math.round(opt3EffectiveQty * futurePrice);
+      const opt3Fee = Math.round(opt3Gross * MANDI_FEE_RATE);
+      const storageFee = Math.round(storageDays * crop.storageDailyRate * quantity);
+      const opt3Net = Math.round(opt3Gross - opt3Fee - storageFee);
+      const opt3LossKg = Math.round(quantity * (storageLossPct / 100) * 100);
+
+      const opt3 = {
+        id: 'store',
+        titleEn: `Option 3: Store & Sell Later (${storageDays} Days)`,
+        titleHi: `विकल्प ३: रोककर ${storageDays} दिन बाद बेचें`,
+        subtitleEn: `Wait for anticipated price rise (${storageDays} days storage)`,
+        subtitleHi: `भाव सुधरने का इंतजार (${storageDays} दिन भंडारण)`,
+        gross: opt3Gross,
+        mandiFee: opt3Fee,
+        freight: 0,
+        storageFee: storageFee,
+        spoilageLossKg: opt3LossKg,
+        spoilagePct: storageLossPct,
+        net: opt3Net,
+        saleQty: Number(opt3EffectiveQty.toFixed(1)),
+        pricePerQtl: futurePrice
+      };
+
+      // Rank options descending by net income
+      const raw = [opt1, opt2, opt3];
+      raw.sort((a, b) => b.net - a.net);
+
+      const best = raw[0];
+      const second = raw[1];
+      const diff = best.net - second.net;
+
+      return {
+        options: raw,
+        best,
+        second,
+        diff,
+        crop,
+        distMandi
+      };
+    }
+
+    // Render Function
+    function recalculate() {
+      const data = calculate();
+      const isHi = currentLang === 'hi';
+
+      // Update Hero Card
+      const heroTitle = isHi ? data.best.titleHi : data.best.titleEn;
+      document.getElementById('hero-title').textContent = heroTitle;
+      document.getElementById('hero-profit-val').textContent = '+₹' + data.diff.toLocaleString('en-IN');
+
+      // Bullets
+      let b1 = '';
+      let b2 = '';
+
+      if (data.best.id === 'transport') {
+        b1 = isHi 
+          ? `जिला मंडी में ₹${data.crop.districtPrice}/क्विंटल का ऊंचा भाव ₹${data.best.freight.toLocaleString('en-IN')} के भाड़े से कहीं ज्यादा कमाई दे रहा है।`
+          : `District mandi price of ₹${data.crop.districtPrice}/qtl generates higher gross value that comfortably covers the freight cost (₹${data.best.freight.toLocaleString('en-IN')}).`;
+        b2 = isHi
+          ? `माल की क्वालिटी अच्छी होने से रास्ते में केवल ${data.best.spoilagePct}% का नुकसान हुआ, जिससे हाथ में +₹${data.diff.toLocaleString('en-IN')} अधिक शुद्ध रकम मिली।`
+          : `Crop quality limits transit decay to ${data.best.spoilagePct}%, securing +₹${data.diff.toLocaleString('en-IN')} extra in-hand profit vs second best choice.`;
+      } else if (data.best.id === 'sell_now') {
+        b1 = isHi
+          ? `शून्य परिवहन खर्च और शून्य सड़न नुकसान के साथ पूरे ₹${data.best.net.toLocaleString('en-IN')} तुरंत हाथ में सुरक्षित मिलते हैं।`
+          : `Zero transport costs and 0% spoilage loss protects ₹${data.best.net.toLocaleString('en-IN')} cash in hand immediately.`;
+        b2 = isHi
+          ? `जल्दी खराब होने वाली फसल में भंडारण करने से भारी सड़न होती। आज बेचने से वह नुकसान बच गया।`
+          : `High perishability avoids severe storage spoilage and Godown rent fees.`;
+      } else {
+        b1 = isHi
+          ? `भविष्य में भाव बढ़कर ₹${data.best.pricePerQtl}/क्विंटल होने का अनुमान है, जो मामूली गोदाम किराये से काफी अधिक है।`
+          : `Anticipated price jump to ₹${data.best.pricePerQtl}/qtl provides substantial margin beyond the storage rent.`;
+        b2 = isHi
+          ? `अनाज/माल सुरक्षित रहने से सड़न केवल ${data.best.spoilagePct}% रही, जिससे शुद्ध लाभ बढ़ गया।`
+          : `Produce sustains very low storage decay (${data.best.spoilagePct}%), maximizing net income.`;
+      }
+
+      document.getElementById('hero-bullet-1').textContent = b1;
+      document.getElementById('hero-bullet-2').textContent = b2;
+
+      // Render 3 Ranked Cards
+      const container = document.getElementById('ranked-cards-list');
+      container.innerHTML = '';
+
+      data.options.forEach((opt, idx) => {
+        const rank = idx + 1;
+        const isBest = rank === 1;
+        const isOkay = rank === 2;
+        const diffFromBest = data.best.net - opt.net;
+
+        let badgeClass = 'badge-rank best';
+        let badgeText = isHi ? 'सर्वश्रेष्ठ विकल्प' : 'BEST CHOICE';
+        let rankClass = 'rank-1';
+
+        if (isOkay) {
+          badgeClass = 'badge-rank okay';
+          badgeText = isHi ? 'मध्यम विकल्प' : 'OKAY OPTION';
+          rankClass = 'rank-2';
+        } else if (rank === 3) {
+          badgeClass = 'badge-rank risk';
+          badgeText = isHi ? 'उच्च जोखिम' : 'HIGH RISK';
+          rankClass = 'rank-3';
+        }
+
+        const cardEl = document.createElement('div');
+        cardEl.className = `ranked-card ${rankClass}`;
+        
+        const isOpen = openCardId === opt.id || (openCardId === null && isBest);
+
+        cardEl.innerHTML = `
+          <div class="ranked-header" onclick="toggleAccordion('${opt.id}')">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span class="${badgeClass}">${badgeText}</span>
+                <span style="font-size: 11px; font-weight: 700; color: #64748b;">#${rank}</span>
+              </div>
+              <div class="option-title">${isHi ? opt.titleHi : opt.titleEn}</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${isHi ? opt.subtitleHi : opt.subtitleEn}</div>
+            </div>
+            <div>
+              <div class="net-rupees">₹${opt.net.toLocaleString('en-IN')}</div>
+              <div class="diff-indicator" style="color: ${isBest ? 'var(--primary-light)' : 'var(--risk-red)'};">
+                ${isBest ? (isHi ? 'अधिकतम मुनाफा' : 'Top Net Return') : `-₹${diffFromBest.toLocaleString('en-IN')}`}
+              </div>
+              <div style="font-size: 10px; color: #94a3b8; text-align: right; margin-top: 4px;">
+                ${isOpen ? (isHi ? 'ब्यौरा छुपाएं ▲' : 'Hide ▲') : (isHi ? 'ब्यौरा देखें ▼' : 'Details ▼')}
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-body ${isOpen ? 'open' : ''}" id="breakdown-${opt.id}">
+            <div class="breakdown-row">
+              <span>${isHi ? 'फसल का कुल मूल्य' : 'Gross Value'} (${opt.saleQty} qtl @ ₹${opt.pricePerQtl})</span>
+              <strong style="color: #0f172a;">₹${opt.gross.toLocaleString('en-IN')}</strong>
+            </div>
+            <div class="breakdown-row">
+              <span>${isHi ? 'मंडी शुल्क (२%)' : 'Mandi Fees (2%)'}</span>
+              <span style="color: var(--risk-red);">-₹${opt.mandiFee.toLocaleString('en-IN')}</span>
+            </div>
+            ${opt.freight > 0 ? `
+              <div class="breakdown-row">
+                <span>${isHi ? 'भाड़ा और परिवहन खर्च' : 'Freight & Transport'}</span>
+                <span style="color: var(--risk-red);">-₹${opt.freight.toLocaleString('en-IN')}</span>
+              </div>
+            ` : ''}
+            ${opt.storageFee > 0 ? `
+              <div class="breakdown-row">
+                <span>${isHi ? 'गोदाम किराया / भंडारण' : 'Storage Fees'}</span>
+                <span style="color: var(--risk-red);">-₹${opt.storageFee.toLocaleString('en-IN')}</span>
+              </div>
+            ` : ''}
+            ${opt.spoilageLossKg > 0 ? `
+              <div class="breakdown-row">
+                <span>${isHi ? 'सड़न/वजन नुकसान' : 'Spoilage Decay Loss'} (${opt.spoilagePct}%)</span>
+                <span style="color: #64748b;">-${opt.spoilageLossKg} kg</span>
+              </div>
+            ` : ''}
+            <div class="breakdown-row net-total">
+              <span>${isHi ? 'हाथ में शुद्ध रकम:' : 'Net Cash in Hand:'}</span>
+              <span style="color: var(--primary-brand); font-size: 15px;">₹${opt.net.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(cardEl);
+      });
+    }
+
+    // Toggle Accordions
+    function toggleAccordion(id) {
+      openCardId = openCardId === id ? null : id;
+      recalculate();
+    }
+
+    // Input handlers
+    function selectCrop(cropKey) {
+      selectedCrop = cropKey;
+      document.querySelectorAll('.crop-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('crop-' + cropKey).classList.add('active');
+      recalculate();
+    }
+
+    function adjustQty(delta) {
+      const input = document.getElementById('qty-input');
+      let val = parseInt(input.value, 10) || 1;
+      val = Math.max(1, Math.min(1000, val + delta));
+      input.value = val;
+      quantity = val;
+      document.getElementById('ui-qty-kg-conv').textContent = `≈ ${(val * 100).toLocaleString('en-IN')} kg`;
+      recalculate();
+    }
+
+    function onQtyChange() {
+      const input = document.getElementById('qty-input');
+      let val = parseInt(input.value, 10) || 1;
+      quantity = Math.max(1, val);
+      document.getElementById('ui-qty-kg-conv').textContent = `≈ ${(quantity * 100).toLocaleString('en-IN')} kg`;
+      recalculate();
+    }
+
+    function selectQuality(q) {
+      quality = q;
+      document.querySelectorAll('.chip-btn').forEach(btn => {
+        btn.classList.remove('active', 'good', 'avg', 'poor');
+      });
+      const target = document.getElementById('quality-' + (q === 'average' ? 'avg' : q));
+      target.classList.add('active', q === 'average' ? 'avg' : q);
+      recalculate();
+    }
+
+    function toggleTransport() {
+      canTransport = document.getElementById('transport-toggle').checked;
+      document.getElementById('transport-options').style.display = canTransport ? 'block' : 'none';
+      recalculate();
+    }
+
+    function toggleStorage() {
+      willingToStore = document.getElementById('storage-toggle').checked;
+      document.getElementById('storage-duration-section').style.display = willingToStore ? 'block' : 'none';
+      recalculate();
+    }
+
+    function selectDuration(days) {
+      storageDays = days;
+      document.querySelectorAll('.duration-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('dur-' + days).classList.add('active');
+      recalculate();
+    }
+
+    function scrollToResults() {
+      document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToInputs() {
+      document.getElementById('inputs-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // WhatsApp Sharing
+    function shareWhatsApp() {
+      const data = calculate();
+      const isHi = currentLang === 'hi';
+      const cropName = isHi ? data.crop.nameHi : data.crop.nameEn;
+      const best = data.best;
+
+      let msg = '';
+      if (isHi) {
+        msg = `🌾 *किसान चॉइस कैलकुलेटर (Kisan Choice Calculator)*
+📊 *फसल बिक्री हिसाब रिपोर्ट*
+
+• *फसल:* ${cropName}
+• *मात्रा:* ${quantity} क्विंटल (${quantity * 100} किलो)
+• *क्वालिटी:* ${quality === 'good' ? 'उत्तम' : quality === 'average' ? 'मध्यम' : 'कमजोर'}
+
+🏆 *सर्वश्रेष्ठ फैसला:* ${best.titleHi}
+💰 *हाथ में शुद्ध रकम:* ₹${best.net.toLocaleString('en-IN')}
+✨ *अतिरिक्त लाभ:* +₹${data.diff.toLocaleString('en-IN')}
+
+📋 *तीनों विकल्पों की तुलना:*
+1️⃣ ${data.options[0].titleHi} 👉 ₹${data.options[0].net.toLocaleString('en-IN')}
+2️⃣ ${data.options[1].titleHi} 👉 ₹${data.options[1].net.toLocaleString('en-IN')}
+3️⃣ ${data.options[2].titleHi} 👉 ₹${data.options[2].net.toLocaleString('en-IN')}
+
+_Kisan Choice Calculator - Behtar Daam Ka Asaan Hisab_`;
+      } else {
+        msg = `🌾 *Kisan Choice Calculator Report*
+📊 *Post-Harvest Sale Analysis*
+
+• *Crop:* ${cropName}
+• *Quantity:* ${quantity} quintals (${quantity * 100} kg)
+• *Quality:* ${quality.toUpperCase()}
+
+🏆 *Recommended Choice:* ${best.titleEn}
+💰 *Net Cash in Hand:* ₹${best.net.toLocaleString('en-IN')}
+✨ *Extra Profit:* +₹${data.diff.toLocaleString('en-IN')} vs second best choice
+
+📋 *Ranked Comparison:*
+1️⃣ ${data.options[0].titleEn} ➔ ₹${data.options[0].net.toLocaleString('en-IN')}
+2️⃣ ${data.options[1].titleEn} ➔ ₹${data.options[1].net.toLocaleString('en-IN')}
+3️⃣ ${data.options[2].titleEn} ➔ ₹${data.options[2].net.toLocaleString('en-IN')}
+
+_Calculated with Kisan Choice Calculator_`;
+      }
+
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    // Language Toggle
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'hi' : 'en';
+      const isHi = currentLang === 'hi';
+
+      document.getElementById('lang-btn-text').textContent = isHi ? 'View in English' : 'हिंदी में देखें';
+      document.getElementById('ui-app-title').textContent = isHi ? 'किसान चॉइस कैलकुलेटर' : 'Kisan Choice Calculator';
+      document.getElementById('ui-app-tagline').textContent = isHi ? 'फसल कटाई के बाद सही बिक्री का फैसला' : 'Post-Harvest Decision Tool for Farmers';
+      document.getElementById('ui-step1-title').textContent = isHi ? 'फसल विवरण' : 'Harvest Parameters';
+      document.getElementById('ui-crop-label').textContent = isHi ? '१. फसल चुनें' : '1. Select Crop';
+      document.getElementById('crop-name-tomato').textContent = isHi ? 'टमाटर' : 'Tomato';
+      document.getElementById('crop-name-guava').textContent = isHi ? 'अमरूद' : 'Guava';
+      document.getElementById('crop-name-wheat').textContent = isHi ? 'गेहूं' : 'Wheat';
+      document.getElementById('ui-qty-label').textContent = isHi ? '२. मात्रा (क्विंटल)' : '2. Quantity (Quintals)';
+      document.getElementById('ui-quality-label').textContent = isHi ? '३. फसल की क्वालिटी' : '3. Crop Quality Grade';
+      document.getElementById('lbl-q-good').textContent = isHi ? 'उत्तम' : 'Good';
+      document.getElementById('desc-q-good').textContent = isHi ? 'ताजा, मजबूत' : 'Fresh, firm';
+      document.getElementById('lbl-q-avg').textContent = isHi ? 'मध्यम' : 'Average';
+      document.getElementById('desc-q-avg').textContent = isHi ? 'मिला-जुला' : 'Mixed size';
+      document.getElementById('lbl-q-poor').textContent = isHi ? 'कमजोर' : 'Poor';
+      document.getElementById('desc-q-poor').textContent = isHi ? 'ज्यादा पका' : 'Over-ripe';
+      document.getElementById('ui-local-mandi-label').textContent = isHi ? '४. स्थानीय मंडी (आज की बिक्री)' : '4. Local Mandi (Sell Today)';
+      document.getElementById('ui-transport-toggle-label').textContent = isHi ? 'क्या जिला मंडी ले जा सकते हैं?' : 'Can transport to District Mandi?';
+      document.getElementById('ui-transport-sub').textContent = isHi ? 'गाड़ी/टेंपो का प्रबंध संभव है' : 'Tempo / mini-truck available';
+      document.getElementById('ui-storage-toggle-label').textContent = isHi ? 'क्या रोककर बाद में बेच सकते हैं?' : 'Willing to Store & Sell Later?';
+      document.getElementById('ui-storage-sub').textContent = isHi ? 'गोदाम में माल रखकर भाव सुधरने का इंतजार' : 'Hold crop in godown for higher prices';
+      document.getElementById('ui-btn-calc').textContent = isHi ? 'सर्वोत्तम बिक्री विकल्प निकालें ↓' : 'Calculate Best Sale Option ↓';
+      document.getElementById('ui-results-heading').textContent = isHi ? 'विकल्पों की तुलना' : 'Decision Comparison';
+      document.getElementById('ui-results-sub').textContent = isHi ? 'हाथ में शुद्ध रकम अनुसार क्रमबद्ध' : 'Ranked by real net cash in hand';
+      document.getElementById('ui-btn-adjust').textContent = isHi ? 'सुधारें' : 'Adjust';
+      document.getElementById('hero-badge-text').textContent = isHi ? 'सर्वोत्तम सलाह (BEST)' : 'BEST RECOMMENDATION';
+      document.getElementById('ui-hero-extra-label').textContent = isHi ? 'अतिरिक्त शुद्ध लाभ:' : 'Extra Profit in-hand:';
+      document.getElementById('ui-hero-extra-sub').textContent = isHi ? 'दूसरे विकल्प की तुलना में' : 'vs second best option';
+      document.getElementById('ui-btn-whatsapp').textContent = isHi ? 'व्हाट्सएप पर हिसाब शेयर करें' : 'Share Summary via WhatsApp';
+      document.getElementById('ui-btn-recalculate').textContent = isHi ? 'विवरण बदलें व दोबारा जांचें' : 'Edit Inputs & Recalculate';
+
+      recalculate();
+    }
+
+    // Initial render
+    recalculate();
+  </script>
+</body>
+</html>

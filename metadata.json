@@ -1,0 +1,6 @@
+{
+  "name": "Kisan Choice Calculator",
+  "description": "Mobile-first post-harvest sale decision tool for smallholder farmers in rural India, comparing Sell Now, Transport, and Store options.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
