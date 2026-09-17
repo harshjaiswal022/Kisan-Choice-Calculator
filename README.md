@@ -2,11 +2,21 @@
 
 > An AI-assisted AgriTech prototype that helps farmers compare post-harvest selling, transportation, and storage options to understand which choice could provide better net returns.
 
-![Kisan Choice Calculator](https://img.shields.io/badge/AgriTech-Farmer%20Decision%20Support-2E7D32)
-![Built With](https://img.shields.io/badge/Built%20With-AI--Assisted%20Development-4285F4)
-![Status](https://img.shields.io/badge/Status-Prototype-orange)
+## 📸 Application Screenshots
 
----
+### Farmer Input
+![Kisan Choice Calculator - Input Screen](screenshots/Screenshot%202026-09-17%20160751.png)
+
+### Sale Strategy Comparison
+![Kisan Choice Calculator - Results](screenshots/Screenshot%202026-09-17%20160820.png)
+
+### Additional Application Screens
+![Kisan Choice Calculator](screenshots/Screenshot%202026-09-17%20160832.png)
+
+![Kisan Choice Calculator](screenshots/Screenshot%202026-09-17%20160844.png)
+
+### Hackathon
+![TCS AI Tech Day RapidBuild Hackathon](screenshots/Snapchat-4282928.jpg)
 
 ## 📌 Overview
 
